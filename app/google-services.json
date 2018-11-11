@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "201142742779",
+    "firebase_url": "https://firemessage-b668a.firebaseio.com",
+    "project_id": "firemessage-b668a",
+    "storage_bucket": "firemessage-b668a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:201142742779:android:3c517a4e8cde9f40",
+        "android_client_info": {
+          "package_name": "com.example.thanaphoombabparn.firemessage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "201142742779-qf7fpv48uf8lvglgonq33tg44ts9of4s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBP3hrAdZWhXwfrBL_GMzF9rwBlRIio5A"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
