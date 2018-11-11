@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.fragment_my_account.view.*
 import org.jetbrains.anko.clearTask
 import org.jetbrains.anko.newTask
 import org.jetbrains.anko.support.v4.intentFor
+import org.jetbrains.anko.support.v4.toast
 import java.io.ByteArrayOutputStream
 
 // TODO: Rename parameter arguments, choose names that match
@@ -71,13 +72,14 @@ class MyAccountFragment : Fragment() {
                         editText_bio.text.toString(),
                         null
                     )
+                toast("Saving")
             }
 
             btn_sign_out.setOnClickListener {
                 AuthUI.getInstance()
                     .signOut(this@MyAccountFragment.context!!)
                     .addOnCompleteListener {
-                        intentFor<SignInActivity>().newTask().clearTask()
+                        startActivity(intentFor<SignInActivity>().newTask().clearTask())
                     }
             }
         }
@@ -109,15 +111,13 @@ class MyAccountFragment : Fragment() {
         super.onStart()
         FirestoreUtil.getCurrentUser { user ->
             if (this@MyAccountFragment.isVisible) {
-                if (user != null) {
-                    editText_name.setText(user.name)
-                    editText_bio.setText(user.bio)
-                    if (!pictureJustChanged && user.profilePicturePath != null) {
-                        GlideApp.with(this)
-                            .load(StorageUtil.pathToReference((user.profilePicturePath)))
-                            .placeholder(R.drawable.ic_account_circle_black_24dp)
-                            .into(imageView_profile_picture)
-                    }
+                editText_name.setText(user.name)
+                editText_bio.setText(user.bio)
+                if (!pictureJustChanged && user.profilePicturePath != null) {
+                    GlideApp.with(this)
+                        .load(StorageUtil.pathToReference((user.profilePicturePath)))
+                        .placeholder(R.drawable.ic_account_circle_black_24dp)
+                        .into(imageView_profile_picture)
                 }
             }
         }

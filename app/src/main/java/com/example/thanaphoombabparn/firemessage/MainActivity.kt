@@ -6,6 +6,7 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import com.example.thanaphoombabparn.firemessage.fragment.MyAccountFragment
+import com.example.thanaphoombabparn.firemessage.fragment.PeopleFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -32,10 +33,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 //        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-            navigation.setOnNavigationItemSelectedListener {
+        replaceFragment(PeopleFragment())
+        navigation.setOnNavigationItemSelectedListener {
                 when(it.itemId){
                     R.id.navigation_people -> {
                         //TODO: show people fragment
+                        replaceFragment(PeopleFragment())
                         true
                     }
                     R.id.navigation_my_account -> {
@@ -47,12 +50,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
     }
+//
+//    @SuppressLint("CommitTransaction")
+//    private fun replaceFragment(fragment: Fragment){
+//        supportFragmentManager.beginTransaction().apply {
+//            replace(R.id.fragment_layout, fragment)
+//            commit()
+//        }
+//    }
 
-    @SuppressLint("CommitTransaction")
     private fun replaceFragment(fragment: Fragment){
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.fragment_layout, fragment)
-            commit()
-        }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_layout, fragment)
+            .commit()
     }
 }

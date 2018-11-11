@@ -1,9 +1,14 @@
 package com.example.thanaphoombabparn.firemessage.utility
 
+import android.content.Context
+import android.util.Log
 import com.example.thanaphoombabparn.firemessage.model.User
+import com.example.thanaphoombabparn.firemessage.recyclerView.item.PersonItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
+import com.xwray.groupie.kotlinandroidextensions.Item
 import java.lang.NullPointerException
 
 object FirestoreUtil {
@@ -16,7 +21,7 @@ object FirestoreUtil {
             // Check current user id in auth and get instance from them
             .getInstance()
             //Check UID.If it null.Throw Error to NullPointerException
-            .uid?: throw NullPointerException("UID is null.")}")
+            .currentUser?.uid?: throw NullPointerException("UID is null.")}")
 
     fun initCurrentUserIfFirstTime(onComplete: () -> Unit){
         currentUserDocRef.get().addOnSuccessListener { documentSnapshot ->
@@ -45,10 +50,30 @@ object FirestoreUtil {
         currentUserDocRef.update(userFieldMap)
     }
 
-    fun getCurrentUser(onComplete: (User?) -> Unit){
+    fun getCurrentUser(onComplete: (User) -> Unit){
         currentUserDocRef.get()
             .addOnSuccessListener {
-                onComplete(it.toObject(User::class.java))
+                onComplete(it.toObject(User::class.java)!!)
             }
     }
+
+    fun addUserListener(context: Context, onListen: (List<Item>) -> Unit) : ListenerRegistration {
+        return firestoreInstance.collection("users")
+            .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                if(firebaseFirestoreException != null){
+                    Log.e("FIRESTORE", "Users listener error", firebaseFirestoreException)
+                    return@addSnapshotListener
+                }
+
+                val items = mutableListOf<Item>()
+                querySnapshot?.documents?.forEach {
+                    // Get the person who registration in app not only me
+                    if(it.id != FirebaseAuth.getInstance().currentUser?.uid)
+                        items.add(PersonItem(it.toObject(User::class.java)!!, it.id, context))
+                }
+                onListen(items)
+            }
+    }
+
+    fun removeListener(registration: ListenerRegistration) = registration.remove()
 }
