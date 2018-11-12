@@ -6,15 +6,20 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.thanaphoombabparn.firemessage.AppConstants
+import com.example.thanaphoombabparn.firemessage.ChatActivity
 
 import com.example.thanaphoombabparn.firemessage.R
+import com.example.thanaphoombabparn.firemessage.recyclerView.item.PersonItem
 import com.example.thanaphoombabparn.firemessage.utility.FirestoreUtil
 import com.google.firebase.firestore.ListenerRegistration
 import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.OnItemClickListener
 import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
 import kotlinx.android.synthetic.main.fragment_people.*
+import org.jetbrains.anko.support.v4.startActivity
 
 
 class PeopleFragment : Fragment() {
@@ -39,27 +44,35 @@ class PeopleFragment : Fragment() {
         shouldInitRecyclerView = true
     }
 
-    private fun updateRecyclerView(items: List<Item>){
-        fun init(){
+    private fun updateRecyclerView(items: List<Item>) {
+        fun init() {
             recycler_view_people.apply {
                 layoutManager = LinearLayoutManager(this@PeopleFragment.context)
                 adapter = GroupAdapter<ViewHolder>().apply {
                     peopleSection = Section(items)
                     add(peopleSection)
+                    setOnItemClickListener(onItemClick)
                 }
             }
             shouldInitRecyclerView = false
         }
 
-        fun updateItems(){
+        fun updateItems() = peopleSection.update(items)
 
-        }
-
-        if(shouldInitRecyclerView)
+        if (shouldInitRecyclerView)
             init()
         else
             updateItems()
 
+    }
+
+    private val onItemClick = OnItemClickListener { item, view ->
+        if (item is PersonItem) {
+            startActivity<ChatActivity>(
+                AppConstants.USER_NAME to item.person.name,
+                AppConstants.USER_ID to item.userId
+            )
+        }
     }
 
 
