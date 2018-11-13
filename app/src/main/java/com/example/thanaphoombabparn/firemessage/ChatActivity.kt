@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager
 import com.example.thanaphoombabparn.firemessage.model.ImageMessage
 import com.example.thanaphoombabparn.firemessage.model.MessageType
 import com.example.thanaphoombabparn.firemessage.model.TextMessage
+import com.example.thanaphoombabparn.firemessage.model.User
 import com.example.thanaphoombabparn.firemessage.utility.FirestoreUtil
 import com.example.thanaphoombabparn.firemessage.utility.StorageUtil
 import com.google.firebase.auth.FirebaseAuth
@@ -27,6 +28,8 @@ private const val RC_SELECT_IMAGE = 2
 class ChatActivity : AppCompatActivity() {
 
     private lateinit var currentChannelId: String
+    private  lateinit var currentUser: User
+    private lateinit var otherUserId: String
 
     private lateinit var messagesListenerRegistration: ListenerRegistration
     private var shouldInitRecyclerView = true
@@ -38,6 +41,10 @@ class ChatActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = intent.getStringExtra(AppConstants.USER_NAME)
+
+        FirestoreUtil.getCurrentUser {
+            currentUser = it
+        }
 
         val otherUserId = intent.getStringExtra(AppConstants.USER_ID)
         FirestoreUtil.getOrCreateChatChannel(otherUserId) { channelId ->
@@ -54,7 +61,8 @@ class ChatActivity : AppCompatActivity() {
                             editText_message.text.toString(),
                             Calendar.getInstance().time,
                             FirebaseAuth.getInstance().currentUser!!.uid,
-                            MessageType.TEXT
+                            otherUserId,
+                            currentUser.name
                         )
                     editText_message.setText("")
                     FirestoreUtil.sendMessage(messageToSend, channelId)
@@ -90,7 +98,9 @@ class ChatActivity : AppCompatActivity() {
                     ImageMessage(
                         imagePath,
                         Calendar.getInstance().time,
-                        FirebaseAuth.getInstance().currentUser!!.uid
+                        FirebaseAuth.getInstance().currentUser!!.uid,
+                        otherUserId,
+                        currentUser.name
                     )
 
                 FirestoreUtil.sendMessage(messageToSend, currentChannelId)
