@@ -28,7 +28,7 @@ private const val RC_SELECT_IMAGE = 2
 class ChatActivity : AppCompatActivity() {
 
     private lateinit var currentChannelId: String
-    private  lateinit var currentUser: User
+    private lateinit var currentUser: User
     private lateinit var otherUserId: String
 
     private lateinit var messagesListenerRegistration: ListenerRegistration
@@ -46,7 +46,7 @@ class ChatActivity : AppCompatActivity() {
             currentUser = it
         }
 
-        val otherUserId = intent.getStringExtra(AppConstants.USER_ID)
+        otherUserId = intent.getStringExtra(AppConstants.USER_ID)
         FirestoreUtil.getOrCreateChatChannel(otherUserId) { channelId ->
 
             currentChannelId = channelId
